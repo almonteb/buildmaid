@@ -1,0 +1,12 @@
+global:
+    max_workers: 2
+    interval: 5
+paths:
+    project1:
+        root: tmp
+        file_man: fs
+        branches:
+            - name: branch1
+              max_days: 50
+            - name: branch2
+              max_days: 20
