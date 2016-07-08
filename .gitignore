@@ -1,5 +1,6 @@
 .*
 !.gitignore
+config.yml
 bin/
 tmp/
 debug

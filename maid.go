@@ -46,9 +46,7 @@ func init() {
 func main() {
 	wg := sync.WaitGroup{}
 	workers := make(chan bool, runConfig.Global.MaxWorkers)
-	defer func() {
-		close(workers)
-	}()
+	defer close(workers)
 
 	for {
 		log.Debugf("Beginning run [Pretend mode: %t]", pretend)
@@ -82,7 +80,7 @@ func processProject(project string, projectCfg config.Project, branchCfg config.
 	root := path.Join(projectCfg.Root, branchCfg.Name)
 	dirs, err := fm.GetDirectories(root)
 	if err != nil {
-		log.Errorf("Failed to list directories: %+v", err)
+		log.Fatalf("Failed to list directories: %+v", err)
 	}
 
 	log.Debugf("Found entries: %+v", dirs)

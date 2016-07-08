@@ -16,6 +16,8 @@ func NewFileMan(name string) (FileManager, error) {
 	switch name {
 	case "fs":
 		return new(FileManFs), nil
+	case "s3":
+		return NewFileManS3("access", "secret", "bucket", "host.com")
 	}
 	return nil, fmt.Errorf("Unknown File Manager type: %s", name)
 }
