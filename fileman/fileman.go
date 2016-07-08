@@ -4,6 +4,12 @@ import "fmt"
 
 type FileManager interface {
 	GetDirectories(path string) ([]string, error)
+	Delete(path string) error
+}
+
+type File struct {
+	Name        string
+	IsDirectory bool
 }
 
 func NewFileMan(name string) (FileManager, error) {

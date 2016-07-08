@@ -29,4 +29,4 @@ doc:
 	godoc -http=:6060 -index
 
 clean:
-	if [ -f ${BINDIR} ] ; then rm ${BINDIR} ; fi
+	rm -rf ${BINDIR}

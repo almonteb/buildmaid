@@ -1,7 +1,8 @@
 package config
 
 type global struct {
-	MaxWorkers int `mapstructure:"max_workers"`
+	MaxWorkers int  `mapstructure:"max_workers"`
+	OneTime    bool `mapstructure:"one_time"`
 	Interval   int
 }
 
@@ -11,7 +12,8 @@ type Branch struct {
 	MaxDays int `mapstructure:"max_days"`
 }
 
-type project struct {
+// Project configuration
+type Project struct {
 	Root     string
 	FileMan  string `mapstructure:"file_man"`
 	Branches []Branch
@@ -20,5 +22,5 @@ type project struct {
 // Config for config
 type Config struct {
 	Global global
-	Paths  map[string]project
+	Paths  map[string]Project
 }

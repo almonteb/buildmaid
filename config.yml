@@ -1,4 +1,5 @@
 global:
+    one_time: true
     max_workers: 2
     interval: 5
 paths:
