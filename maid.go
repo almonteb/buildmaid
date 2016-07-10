@@ -30,6 +30,7 @@ func init() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	viper.BindEnv("PRETEND")
 	if viper.GetBool("PRETEND") {
 		pretend = true
 	}
@@ -51,7 +52,7 @@ func main() {
 	for {
 		log.Debugf("Beginning run [Pretend mode: %t]", pretend)
 		for project, config := range runConfig.Paths {
-			fm, err := fileman.NewFileMan(config.FileMan)
+			fm, err := fileman.NewFileMan(config)
 			if err != nil {
 				log.Panicf("Unable to create file manager %s", config.FileMan)
 			}
@@ -84,7 +85,7 @@ func processProject(project string, projectCfg config.Project, branchCfg config.
 	}
 
 	log.Debugf("Found entries: %+v", dirs)
-	toRemove := util.GetRemovalCandidates(dirs, branchCfg.MaxDays)
+	toRemove := util.GetRemovalCandidates(dirs, branchCfg.MaxBuilds)
 	log.Debugf("Removal candidates: %+v", toRemove)
 
 	if pretend {
@@ -92,9 +93,8 @@ func processProject(project string, projectCfg config.Project, branchCfg config.
 	}
 
 	for _, dir := range toRemove {
-		d := path.Join(root, dir)
-		if err := fm.Delete(d); err != nil {
-			log.Warnf("Unable to delete directory: %s", d)
+		if err := fm.Delete(dir); err != nil {
+			log.Warnf("Unable to delete directory: %s", dir)
 		}
 	}
 }

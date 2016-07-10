@@ -3,13 +3,14 @@ package fileman
 import (
 	"io/ioutil"
 	"os"
+	"path"
 )
 
 type FileManFs struct{}
 
-func (fm *FileManFs) GetDirectories(path string) ([]string, error) {
+func (fm *FileManFs) GetDirectories(root string) ([]string, error) {
 
-	files, err := ioutil.ReadDir(path)
+	files, err := ioutil.ReadDir(root)
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +18,8 @@ func (fm *FileManFs) GetDirectories(path string) ([]string, error) {
 	var dirs []string
 	for _, dir := range files {
 		if dir.IsDir() {
-			dirs = append(dirs, dir.Name())
+			p := path.Join(root, dir.Name())
+			dirs = append(dirs, p)
 		}
 	}
 	return dirs, nil

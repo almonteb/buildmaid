@@ -8,8 +8,16 @@ type global struct {
 
 // Branch configuration
 type Branch struct {
-	Name    string
-	MaxDays int `mapstructure:"max_days"`
+	Name      string
+	MaxBuilds int `mapstructure:"max_builds"`
+}
+
+// S3Config information
+type S3Config struct {
+	Access string
+	Secret string
+	Bucket string
+	Host   string
 }
 
 // Project configuration
@@ -17,6 +25,7 @@ type Project struct {
 	Root     string
 	FileMan  string `mapstructure:"file_man"`
 	Branches []Branch
+	S3Config S3Config `mapstructure:"s3_config"`
 }
 
 // Config for config

@@ -8,6 +8,19 @@ paths:
         file_man: fs
         branches:
             - name: branch1
-              max_days: 50
+              max_builds: 3
             - name: branch2
-              max_days: 20
+              max_builds: 20
+    project2:
+        root: test
+        file_man: s3
+        s3_config:
+            access: accessKey
+            secret: secretKey
+            bucket: bucketName
+            host: my.s3.object.store.com
+        branches:
+            - name: branch1
+              max_builds: 3
+            - name: branch2
+              max_builds: 20

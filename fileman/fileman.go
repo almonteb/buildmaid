@@ -1,23 +1,21 @@
 package fileman
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/almonteb/buildmaid/config"
+)
 
 type FileManager interface {
 	GetDirectories(path string) ([]string, error)
 	Delete(path string) error
 }
 
-type File struct {
-	Name        string
-	IsDirectory bool
-}
-
-func NewFileMan(name string) (FileManager, error) {
-	switch name {
+func NewFileMan(config config.Project) (FileManager, error) {
+	switch config.FileMan {
 	case "fs":
 		return new(FileManFs), nil
 	case "s3":
-		return NewFileManS3("access", "secret", "bucket", "host.com")
+		return NewFileManS3(config.S3Config.Access, config.S3Config.Secret, config.S3Config.Bucket, config.S3Config.Host)
 	}
-	return nil, fmt.Errorf("Unknown File Manager type: %s", name)
+	return nil, fmt.Errorf("Unknown File Manager type: %s", config.FileMan)
 }

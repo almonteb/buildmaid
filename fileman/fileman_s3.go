@@ -2,6 +2,7 @@ package fileman
 
 import (
 	"crypto/tls"
+	log "github.com/Sirupsen/logrus"
 	"github.com/minio/minio-go"
 	"net/http"
 )
@@ -28,22 +29,62 @@ func NewFileManS3(accessKey, secretKey, bucket, host string) (*fileManS3, error)
 	}, nil
 }
 
-func (fm *fileManS3) GetDirectories(path string) ([]string, error) {
-	doneCh := make(chan struct{})
-	defer close(doneCh)
-
+func (fm *fileManS3) GetDirectories(root string) ([]string, error) {
 	var dirs []string
-	objectCh := fm.client.ListObjects(fm.bucket, path, false, doneCh)
-	for object := range objectCh {
-		if object.Err != nil {
-			return nil, object.Err
-		}
-		dirs = append(dirs, object.Key)
-	}
-
-	return dirs, nil
+	err := fm.forEachObject(root, func(o minio.ObjectInfo) error {
+		dirs = append(dirs, o.Key)
+		return nil
+	})
+	return dirs, err
 }
 
 func (fm *fileManS3) Delete(path string) error {
+	err := fm.forEachObject(path, func(o minio.ObjectInfo) error {
+		if isDirectory(o.Key) {
+			if err := fm.Delete(o.Key); err != nil {
+				return err
+			}
+		} else {
+			if err := fm.client.RemoveObject(fm.bucket, o.Key); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return fm.client.RemoveObject(fm.bucket, path)
+}
+
+func (fm *fileManS3) forEachObject(path string, f func(minio.ObjectInfo) error) error {
+	doneCh := make(chan struct{})
+	defer close(doneCh)
+
+	p := ensureTrailingSlash(path)
+	objectCh := fm.client.ListObjects(fm.bucket, p, false, doneCh)
+	for object := range objectCh {
+		if object.Err != nil {
+			return object.Err
+		}
+		if object.Key == p {
+			continue
+		}
+		log.Debugf("Object: %+v", object)
+		if err := f(object); err != nil {
+			return err
+		}
+	}
 	return nil
+}
+
+func ensureTrailingSlash(str string) string {
+	if !isDirectory(str) {
+		str += "/"
+	}
+	return str
+}
+
+func isDirectory(p string) bool {
+	return p[len(p)-1] == '/'
 }
