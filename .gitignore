@@ -2,5 +2,6 @@
 !.gitignore
 config.yml
 bin/
+release/
 tmp/
 debug
