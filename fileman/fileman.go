@@ -6,8 +6,13 @@ import (
 )
 
 type FileManager interface {
-	GetBuilds(path string) ([]string, error)
-	Delete(path string) error
+	GetBuilds(path string) ([]Build, error)
+	Delete(build Build) error
+}
+
+type Build struct {
+	Name string
+	Path string
 }
 
 func NewFileMan(config config.Project) (FileManager, error) {

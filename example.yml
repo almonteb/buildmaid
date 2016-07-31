@@ -6,6 +6,8 @@ paths:
     project1:
         root: tmp
         file_man: fs
+        ignores:
+            - latest
         branches:
             - name: branch1
               max_builds: 3

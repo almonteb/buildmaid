@@ -79,22 +79,22 @@ func processProject(project string, projectCfg config.Project, branchCfg config.
 	defer onComplete()
 	log.Printf("Processing project: %s, branch: %s, config: %+v", project, branchCfg.Name, branchCfg)
 	root := path.Join(projectCfg.Root, branchCfg.Name)
-	dirs, err := fm.GetBuilds(root)
+	builds, err := fm.GetBuilds(root)
 	if err != nil {
-		log.Fatalf("Failed to list directories: %+v", err)
+		log.Fatalf("Failed to get builds: %+v", err)
 	}
 
-	log.Debugf("Found entries: %+v", dirs)
-	toRemove := util.GetRemovalCandidates(dirs, branchCfg.MaxBuilds)
+	log.Debugf("Found builds: %+v", builds)
+	toRemove := util.GetRemovalCandidates(util.FilterIgnores(builds, projectCfg.Ignores), branchCfg.MaxBuilds)
 	log.Debugf("Removal candidates: %+v", toRemove)
 
 	if pretend {
 		return
 	}
 
-	for _, dir := range toRemove {
-		if err := fm.Delete(dir); err != nil {
-			log.Warnf("Unable to delete directory: %s", dir)
+	for _, build := range toRemove {
+		if err := fm.Delete(build); err != nil {
+			log.Warnf("Unable to delete build: %s", build)
 		}
 	}
 }

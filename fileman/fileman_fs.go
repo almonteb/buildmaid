@@ -8,23 +8,22 @@ import (
 
 type FileManFs struct{}
 
-func (fm *FileManFs) GetBuilds(root string) ([]string, error) {
-
+func (fm *FileManFs) GetBuilds(root string) ([]Build, error) {
 	files, err := ioutil.ReadDir(root)
 	if err != nil {
 		return nil, err
 	}
 
-	var dirs []string
+	var builds []Build
 	for _, dir := range files {
 		if dir.IsDir() {
 			p := path.Join(root, dir.Name())
-			dirs = append(dirs, p)
+			builds = append(builds, Build{Name: dir.Name(), Path: p})
 		}
 	}
-	return dirs, nil
+	return builds, nil
 }
 
-func (fm *FileManFs) Delete(path string) error {
-	return os.RemoveAll(path)
+func (fm *FileManFs) Delete(build Build) error {
+	return os.RemoveAll(build.Path)
 }

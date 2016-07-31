@@ -5,6 +5,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/minio/minio-go"
 	"net/http"
+	"strings"
 )
 
 type FileManS3 struct {
@@ -29,19 +30,24 @@ func NewFileManS3(accessKey, secretKey, bucket, host string) (*FileManS3, error)
 	}, nil
 }
 
-func (fm *FileManS3) GetBuilds(root string) ([]string, error) {
-	var dirs []string
+func (fm *FileManS3) GetBuilds(root string) ([]Build, error) {
+	var builds []Build
 	err := fm.forEachObject(root, func(o minio.ObjectInfo) error {
-		dirs = append(dirs, o.Key)
+		splitPath := strings.Split(o.Key, "/")
+		builds = append(builds, Build{Name: splitPath[len(splitPath)-2], Path: o.Key})
 		return nil
 	})
-	return dirs, err
+	return builds, err
 }
 
-func (fm *FileManS3) Delete(path string) error {
+func (fm *FileManS3) Delete(build Build) error {
+	return fm.recursiveDelete(build.Path)
+}
+
+func (fm *FileManS3) recursiveDelete(path string) error {
 	err := fm.forEachObject(path, func(o minio.ObjectInfo) error {
 		if isDirectory(o.Key) {
-			if err := fm.Delete(o.Key); err != nil {
+			if err := fm.recursiveDelete(o.Key); err != nil {
 				return err
 			}
 		} else {

@@ -24,6 +24,7 @@ type S3Config struct {
 type Project struct {
 	Root     string
 	FileMan  string `mapstructure:"file_man"`
+	Ignores  []string
 	Branches []Branch
 	S3Config S3Config `mapstructure:"s3_config"`
 }
