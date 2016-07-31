@@ -6,7 +6,7 @@ import (
 )
 
 type FileManager interface {
-	GetDirectories(path string) ([]string, error)
+	GetBuilds(path string) ([]string, error)
 	Delete(path string) error
 }
 

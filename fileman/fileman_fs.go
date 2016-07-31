@@ -8,7 +8,7 @@ import (
 
 type FileManFs struct{}
 
-func (fm *FileManFs) GetDirectories(root string) ([]string, error) {
+func (fm *FileManFs) GetBuilds(root string) ([]string, error) {
 
 	files, err := ioutil.ReadDir(root)
 	if err != nil {

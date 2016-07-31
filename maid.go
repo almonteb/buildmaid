@@ -79,7 +79,7 @@ func processProject(project string, projectCfg config.Project, branchCfg config.
 	defer onComplete()
 	log.Printf("Processing project: %s, branch: %s, config: %+v", project, branchCfg.Name, branchCfg)
 	root := path.Join(projectCfg.Root, branchCfg.Name)
-	dirs, err := fm.GetDirectories(root)
+	dirs, err := fm.GetBuilds(root)
 	if err != nil {
 		log.Fatalf("Failed to list directories: %+v", err)
 	}

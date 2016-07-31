@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-type fileManS3 struct {
+type FileManS3 struct {
 	client *minio.Client
 	bucket string
 }
 
-func NewFileManS3(accessKey, secretKey, bucket, host string) (*fileManS3, error) {
+func NewFileManS3(accessKey, secretKey, bucket, host string) (*FileManS3, error) {
 	client, err := minio.New(host, accessKey, secretKey, true)
 
 	tr := &http.Transport{
@@ -23,13 +23,13 @@ func NewFileManS3(accessKey, secretKey, bucket, host string) (*fileManS3, error)
 	if err != nil {
 		return nil, err
 	}
-	return &fileManS3{
+	return &FileManS3{
 		client: client,
 		bucket: bucket,
 	}, nil
 }
 
-func (fm *fileManS3) GetDirectories(root string) ([]string, error) {
+func (fm *FileManS3) GetBuilds(root string) ([]string, error) {
 	var dirs []string
 	err := fm.forEachObject(root, func(o minio.ObjectInfo) error {
 		dirs = append(dirs, o.Key)
@@ -38,7 +38,7 @@ func (fm *fileManS3) GetDirectories(root string) ([]string, error) {
 	return dirs, err
 }
 
-func (fm *fileManS3) Delete(path string) error {
+func (fm *FileManS3) Delete(path string) error {
 	err := fm.forEachObject(path, func(o minio.ObjectInfo) error {
 		if isDirectory(o.Key) {
 			if err := fm.Delete(o.Key); err != nil {
@@ -57,7 +57,7 @@ func (fm *fileManS3) Delete(path string) error {
 	return fm.client.RemoveObject(fm.bucket, path)
 }
 
-func (fm *fileManS3) forEachObject(path string, f func(minio.ObjectInfo) error) error {
+func (fm *FileManS3) forEachObject(path string, f func(minio.ObjectInfo) error) error {
 	doneCh := make(chan struct{})
 	defer close(doneCh)
 
