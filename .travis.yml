@@ -1,6 +1,11 @@
 language: go
+
 go:
   - 1.7
+
+install:
+  - go get -u -v $(go list -f '{{join .Imports "\n"}}' ./... | sort | uniq | grep -v buildmaid)
+
 script:
   - make test
   - make
