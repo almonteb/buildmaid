@@ -35,7 +35,7 @@ clean:
 	rm -rf ${BINDIR} ${RELEASEDIR}
 
 define generate_release
-	$(eval DIR := ${RELEASEDIR}/buildmaid-$(1))
+	$(eval DIR := ${RELEASEDIR}/${NAME}-$(1))
 	GOOS=$(1) GOARCH=amd64 ${BUILDCMD} -o ${DIR}/$(2) .
 	cp example.yml ${DIR}
 	tar -C ${DIR} -cvzf ${DIR}-${VERSION}.tar.gz .

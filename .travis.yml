@@ -1,0 +1,20 @@
+language: go
+go:
+  - 1.7
+script:
+  - make test
+  - make
+
+before_deploy:
+  - export VERSION=$TRAVIS_TAG
+  - make release
+
+deploy:
+  provider: releases
+  api_key:
+    secure: yGaMNIkiiZa9l9ITSE0K7xB72lzBt514RaHcvgO1cERNWiPovHO38tGJPU+ZSHhofi2gJ6nlPRDZXQbL2fsXoU9vrhriJFwG/Mi+9GVjah+FPxPeDa2K84hvkAbnC/7On2zr61xCvpxyhr0BYYWlQEU9K5exVLZ+ISZ3o9RAwRse1FqUfDe05PSKDREuBVqdINzPY3YVuEhfsp+J9w/QbdZKgjxuPtJHcCAA2m9u/ulocHMigEVc6v9pfvVbqNG/wxd7C930tO9JystGsNHCRQZsD2/rZG8r2M7JOsoU4yKv4SuyLB77UNrP4usGMWoj86ssrXNem3xOSQjetqsXtuEcdLBiN0jaGnm3fJPve4ipArMU0GQoXctmzWHIa1nuzHhz6so6poTMFrQYE8+lkXgHbkgIiJpBU8ZYJMwEFeJ52KF3BBJXUfoyDlyzJ9uU3G+mVL1ZZlTs3O9PzmxsISksZNG0viWtYeuF+K8++ideRMusDMm97FtizZiLF+B0FBjUpTjuG8VmuPsxEMh7e/ChdpSfjubq0hQGIwVvGO7XSw+2xeRR0MBjwr0h7UquMsCnknL33hflUjJ801ZwhnyXRjV+4+FuN6X+PZYwuvj0hbsRFlQ0Cw2o8U1YrnsPIacBKnwozFOFphaRW9FdJAhhVMMOH4uztU8dvBHyLgw=
+  file_glob: true
+  file: "release/*.tar.gz"
+  skip_cleanup: true
+  on:
+    tags: true
